@@ -17,6 +17,7 @@
                     <RouterLink v-if="hasUpload" class="hover:text-white" to="/progress">Progress</RouterLink>
                     <RouterLink class="hover:text-white" to="/impressum">Impressum</RouterLink>
                     <RouterLink class="hover:text-white" to="/datenschutz">Datenschutz</RouterLink>
+                    <RouterLink class="hover:text-white" to="/admin">Admin</RouterLink>
                     <button
                         class="rounded-xl border border-white/10 px-3 py-1 text-xs font-semibold text-slate-200 hover:text-white"
                         type="button" :aria-pressed="isDark" @click="toggleTheme">

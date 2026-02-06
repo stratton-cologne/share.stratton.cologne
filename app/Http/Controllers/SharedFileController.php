@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SharedBatchCreated;
 use App\Models\SharedBatch;
 use App\Models\SharedFile;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon as SupportCarbon;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use ZipArchive;
@@ -54,6 +56,17 @@ class SharedFileController extends Controller
             $uploads[] = $this->transform($sharedFile);
         }
 
+        Mail::to($batch->uploader_email)->send(new SharedBatchCreated(
+            $batch,
+            collect($uploads)
+                ->map(fn (array $upload) => [
+                    'original_name' => $upload['original_name'],
+                    'size' => (int) $upload['size'],
+                ])
+                ->values()
+                ->all()
+        ));
+
         return response()->json([
             'batch' => $this->transformBatch($batch),
             'uploads' => $uploads,
@@ -86,7 +99,7 @@ class SharedFileController extends Controller
             File::makeDirectory($tmpDir, 0755, true);
         }
 
-        $dateStamp = Carbon::now()->format('Ymd');
+            $dateStamp = now()->format('Ymd');
         $fileCount = $files->count();
         $zipName = "StrattonShare_{$dateStamp}_{$fileCount}.zip";
         $zipPath = $tmpDir.'/'.$zipName;

@@ -21,6 +21,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_admin',
+        'mfa_totp_enabled',
+        'mfa_totp_secret',
+        'mfa_email_enabled',
+        'mfa_email_code_hash',
+        'mfa_email_expires_at',
     ];
 
     /**
@@ -31,6 +37,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'mfa_totp_secret',
+        'mfa_email_code_hash',
     ];
 
     /**
@@ -43,6 +51,10 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'mfa_totp_enabled' => 'boolean',
+            'mfa_email_enabled' => 'boolean',
+            'mfa_totp_secret' => 'encrypted',
+            'mfa_email_expires_at' => 'datetime',
         ];
     }
 }

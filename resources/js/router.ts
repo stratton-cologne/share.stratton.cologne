@@ -5,6 +5,11 @@ import SharePage from "@/pages/SharePage.vue";
 import DownloadPage from "@/pages/DownloadPage.vue";
 import ImpressumPage from "@/pages/ImpressumPage.vue";
 import DatenschutzPage from "@/pages/DatenschutzPage.vue";
+import AdminPage from "@/pages/AdminPage.vue";
+import AdminLoginPage from "@/pages/AdminLoginPage.vue";
+import AdminUsersPage from "@/pages/AdminUsersPage.vue";
+import AdminProfilePage from "@/pages/AdminProfilePage.vue";
+import axios from "axios";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -43,7 +48,45 @@ const router = createRouter({
             name: "datenschutz",
             component: DatenschutzPage,
         },
+        {
+            path: "/admin",
+            name: "admin",
+            component: AdminPage,
+        },
+        {
+            path: "/admin/login",
+            name: "admin-login",
+            component: AdminLoginPage,
+        },
+        {
+            path: "/admin/users",
+            name: "admin-users",
+            component: AdminUsersPage,
+        },
+        {
+            path: "/admin/profile",
+            name: "admin-profile",
+            component: AdminProfilePage,
+        },
     ],
+});
+
+const adminRoutes = new Set(["/admin", "/admin/users", "/admin/profile"]);
+
+router.beforeEach(async (to) => {
+    if (to.path === "/admin/login") return true;
+    if (!adminRoutes.has(to.path)) return true;
+
+    try {
+        const response = await axios.get("/api/admin/auth/me");
+        if (response.data?.authenticated && response.data?.user?.is_admin) {
+            return true;
+        }
+    } catch {
+        // ignore
+    }
+
+    return { path: "/admin/login" };
 });
 
 export default router;

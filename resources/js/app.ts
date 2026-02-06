@@ -14,3 +14,19 @@ if (csrfToken) {
 const app = createApp(App);
 app.use(router);
 app.mount("#app");
+
+axios
+    .get("/api/admin/auth/csrf")
+    .then((response) => {
+        const token = response.data?.token;
+        if (token) {
+            const meta = document.querySelector('meta[name="csrf-token"]');
+            if (meta) {
+                meta.setAttribute("content", token);
+            }
+            axios.defaults.headers.common["X-CSRF-TOKEN"] = token;
+        }
+    })
+    .catch(() => {
+        // ignore
+    });
