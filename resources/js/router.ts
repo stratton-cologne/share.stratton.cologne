@@ -5,6 +5,7 @@ import SharePage from "@/pages/SharePage.vue";
 import DownloadPage from "@/pages/DownloadPage.vue";
 import ImpressumPage from "@/pages/ImpressumPage.vue";
 import DatenschutzPage from "@/pages/DatenschutzPage.vue";
+import AgbPage from "@/pages/AgbPage.vue";
 import AdminPage from "@/pages/AdminPage.vue";
 import AdminLoginPage from "@/pages/AdminLoginPage.vue";
 import AdminUsersPage from "@/pages/AdminUsersPage.vue";
@@ -47,6 +48,11 @@ const router = createRouter({
             path: "/datenschutz",
             name: "datenschutz",
             component: DatenschutzPage,
+        },
+        {
+            path: "/agb",
+            name: "agb",
+            component: AgbPage,
         },
         {
             path: "/admin",
