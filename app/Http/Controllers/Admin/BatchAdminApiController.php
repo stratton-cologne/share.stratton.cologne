@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\SharedBatchDeletedByAdmin;
 use App\Models\SharedBatch;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class BatchAdminApiController extends Controller
@@ -47,9 +49,11 @@ class BatchAdminApiController extends Controller
 
     public function destroy(SharedBatch $batch)
     {
-        DB::transaction(function () use ($batch) {
-            $batch->loadMissing('files');
+        $batch->loadMissing('files');
+        $uploaderEmail = $batch->uploader_email;
+        $fileCount = $batch->files->count();
 
+        DB::transaction(function () use ($batch) {
             foreach ($batch->files as $file) {
                 $path = 'uploads/'.$file->stored_name;
                 if (Storage::exists($path)) {
@@ -60,6 +64,10 @@ class BatchAdminApiController extends Controller
 
             $batch->delete();
         });
+
+        if ($uploaderEmail) {
+            Mail::to($uploaderEmail)->send(new SharedBatchDeletedByAdmin($fileCount));
+        }
 
         return response()->json(['status' => 'deleted']);
     }
