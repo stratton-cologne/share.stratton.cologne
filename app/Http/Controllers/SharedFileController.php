@@ -76,7 +76,9 @@ class SharedFileController extends Controller
     public function showBatch(string $token)
     {
         $batch = SharedBatch::where('token', $token)->firstOrFail();
-        $this->ensureBatchAvailable($batch);
+        if ($message = $this->getBatchAvailabilityError($batch)) {
+            return response()->json(['message' => $message], 410);
+        }
 
         return response()->json([
             'batch' => $this->transformBatch($batch),
@@ -87,11 +89,19 @@ class SharedFileController extends Controller
     public function downloadBatch(string $token)
     {
         $batch = SharedBatch::where('token', $token)->firstOrFail();
-        $this->ensureBatchAvailable($batch);
+        if ($message = $this->getBatchAvailabilityError($batch)) {
+            return response()->json(['message' => $message], 410);
+        }
 
         $files = $batch->files()->get();
         if ($files->isEmpty()) {
             return response()->json(['message' => 'Keine Dateien vorhanden.'], 404);
+        }
+
+        foreach ($files as $file) {
+            if ($message = $this->getAvailabilityError($file)) {
+                return response()->json(['message' => $message], 410);
+            }
         }
 
         $tmpDir = storage_path('app/tmp');
@@ -136,13 +146,19 @@ class SharedFileController extends Controller
 
         $zip->close();
 
+        foreach ($files as $file) {
+            $file->increment('download_count');
+        }
+
         return response()->download($zipPath, $zipName)->deleteFileAfterSend(true);
     }
 
     public function show(string $token)
     {
         $sharedFile = SharedFile::where('token', $token)->firstOrFail();
-        $this->ensureAvailable($sharedFile);
+        if ($message = $this->getAvailabilityError($sharedFile)) {
+            return response()->json(['message' => $message], 410);
+        }
 
         return response()->json($this->transform($sharedFile));
     }
@@ -150,7 +166,9 @@ class SharedFileController extends Controller
     public function download(string $token)
     {
         $sharedFile = SharedFile::where('token', $token)->firstOrFail();
-        $this->ensureAvailable($sharedFile);
+        if ($message = $this->getAvailabilityError($sharedFile)) {
+            return response()->json(['message' => $message], 410);
+        }
 
         $path = 'uploads/'.$sharedFile->stored_name;
         if (!Storage::exists($path)) {
@@ -164,15 +182,17 @@ class SharedFileController extends Controller
         ]);
     }
 
-    private function ensureAvailable(SharedFile $sharedFile): void
+    private function getAvailabilityError(SharedFile $sharedFile): ?string
     {
         if ($sharedFile->expires_at && now()->greaterThan($sharedFile->expires_at)) {
-            abort(410, 'Dieser Link ist abgelaufen.');
+            return 'Dieser Link ist abgelaufen.';
         }
 
         if ($sharedFile->max_downloads && $sharedFile->download_count >= $sharedFile->max_downloads) {
-            abort(410, 'Dieses Download-Limit wurde erreicht.');
+            return 'Dieses Download-Limit wurde erreicht.';
         }
+
+        return null;
     }
 
     private function transform(SharedFile $sharedFile): array
@@ -205,10 +225,12 @@ class SharedFileController extends Controller
         ];
     }
 
-    private function ensureBatchAvailable(SharedBatch $batch): void
+    private function getBatchAvailabilityError(SharedBatch $batch): ?string
     {
         if ($batch->expires_at && now()->greaterThan($batch->expires_at)) {
-            abort(410, 'Dieser Link ist abgelaufen.');
+            return 'Dieser Link ist abgelaufen.';
         }
+
+        return null;
     }
 }

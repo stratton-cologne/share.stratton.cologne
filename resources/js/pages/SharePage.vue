@@ -33,9 +33,14 @@
                 <div class="flex flex-wrap gap-4">
                     <button
                         class="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-sky-500 to-purple-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/20"
+                        :disabled="batchRemaining !== null && batchRemaining <= 0"
+                        :class="batchRemaining !== null && batchRemaining <= 0 ? 'opacity-60 cursor-not-allowed' : ''"
                         @click="downloadZip">
                         Alle als ZIP herunterladen
                     </button>
+                    <p v-if="batchRemaining !== null" class="text-sm text-slate-400">
+                        Verbleibende Downloads: {{ batchRemaining }}
+                    </p>
                 </div>
 
                 <div class="grid gap-3 md:grid-cols-2">
@@ -44,9 +49,14 @@
                         <p class="text-sm text-slate-400">Datei</p>
                         <p class="text-lg font-medium">{{ item.original_name }}</p>
                         <p class="mt-1 text-sm text-slate-400">Größe: {{ formatBytes(item.size) }}</p>
+                        <p v-if="item.max_downloads !== null" class="mt-1 text-sm text-slate-400">
+                            Verbleibende Downloads: {{ Math.max(0, item.max_downloads - item.download_count) }}
+                        </p>
                         <div class="mt-3 flex flex-wrap gap-3">
                             <button
                                 class="rounded-xl border border-white/10 px-4 py-2 text-xs font-semibold text-slate-200"
+                                :disabled="item.max_downloads !== null && item.download_count >= item.max_downloads"
+                                :class="item.max_downloads !== null && item.download_count >= item.max_downloads ? 'opacity-60 cursor-not-allowed' : ''"
                                 @click="downloadFile(item.token)">
                                 Datei herunterladen
                             </button>
@@ -90,6 +100,8 @@ interface FileInfo {
     download_url: string;
     original_name: string;
     size: number;
+    download_count: number;
+    max_downloads: number | null;
 }
 
 interface BatchInfo {
@@ -111,6 +123,13 @@ const copied = ref(false);
 const totalSize = computed(() => {
     const total = files.value.reduce((sum, item) => sum + item.size, 0);
     return formatBytes(total);
+});
+
+const batchRemaining = computed(() => {
+    const limited = files.value.filter((file) => file.max_downloads !== null);
+    if (!limited.length) return null;
+    const remainingValues = limited.map((file) => Math.max(0, file.max_downloads! - file.download_count));
+    return Math.min(...remainingValues);
 });
 
 const fetchInfo = async () => {
@@ -136,10 +155,19 @@ const copyLink = async () => {
 
 const downloadZip = () => {
     if (!token) return;
+    if (batchRemaining.value !== null && batchRemaining.value <= 0) {
+        error.value = 'Dieses Download-Limit wurde erreicht.';
+        return;
+    }
     window.location.href = `/api/batches/${token}/download`;
 };
 
 const downloadFile = (fileToken: string) => {
+    const file = files.value.find((item) => item.token === fileToken);
+    if (file && file.max_downloads !== null && file.download_count >= file.max_downloads) {
+        error.value = 'Dieses Download-Limit wurde erreicht.';
+        return;
+    }
     window.location.href = `/api/files/${fileToken}/download`;
 };
 
