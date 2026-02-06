@@ -1,50 +1,50 @@
 name: Build & Deploy Doxygen to GitHub Pages
 
 on:
-    push:
-        branches: ["main"]
-    workflow_dispatch:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
 
 permissions:
-    contents: read
-    pages: write
-    id-token: write
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
-    group: "pages"
-    cancel-in-progress: true
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-            - name: Install Doxygen (and Graphviz)
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y doxygen graphviz
+      - name: Install Doxygen (and Graphviz)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen graphviz
 
-            - name: Build Doxygen
-              run: |
-                  doxygen docs/doxygen/Doxyfile
+      - name: Build Doxygen
+        run: |
+          doxygen docs/doxygen/Doxyfile
 
-            - name: Upload Pages artifact
-              uses: actions/upload-pages-artifact@v3
-              with:
-                  path: docs/doxygen/html
-                                    name: doxygen-pages
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/doxygen/html
+          name: doxygen-pages
 
-    deploy:
-        needs: build
-        runs-on: ubuntu-latest
-        environment:
-            name: github-pages
-            url: ${{ steps.deployment.outputs.page_url }}
-        steps:
-            - name: Deploy to GitHub Pages
-              id: deployment
-              uses: actions/deploy-pages@v4
-                            with:
-                                    artifact_name: doxygen-pages
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: doxygen-pages
