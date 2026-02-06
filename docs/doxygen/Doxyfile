@@ -1,0 +1,17 @@
+PROJECT_NAME = Stratton Share
+OUTPUT_DIRECTORY = docs/doxygen
+GENERATE_HTML = YES
+HTML_OUTPUT = html
+GENERATE_LATEX = NO
+
+INPUT = app routes resources config database README.md
+RECURSIVE = YES
+MARKDOWN_SUPPORT = YES
+FILE_PATTERNS = _.php _.js _.ts _.vue \*.md
+EXTENSION_MAPPING = php=PHP
+
+# Optional schön:
+
+EXTRACT_ALL = YES
+EXTRACT_PRIVATE = NO
+EXTRACT_STATIC = YES

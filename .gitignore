@@ -20,7 +20,7 @@ coverage
 # Editor directories and files
 /vendor
 /.idea
-.github/
+.github/instructions.md
 .vscode/*
 .idea
 .DS_Store
@@ -62,3 +62,11 @@ package-lock.json
 .idea/
 .prettyrc
 .prettierrc
+
+# =========================
+# Doxygen (wichtig!)
+# =========================
+
+# Generierte HTML-/LaTeX-Dokumentation NICHT committen
+docs/doxygen/html/
+docs/doxygen/latex/

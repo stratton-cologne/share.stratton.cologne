@@ -44,6 +44,6 @@ WeTransfer-ähnlicher File-Sharing Dienst für share.stratton.cologne, umgesetzt
 
 ### Konfiguration
 
-- `APP_URL` ist auf https://file.stratton.cologne gesetzt.
+- `APP_URL` ist auf https://share.stratton.cologne gesetzt.
 - Datenbank: MariaDB (`DB_CONNECTION=mariadb` in .env).
 - Dateigrößenlimit in `SharedFileController::store()` (aktuell 1 GB, abhängig von PHP-Upload-Limits).
