@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../**/*.ts';
+@source '../**/*.vue';
+
+@theme {
+    --font-sans:
+        "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
+}
+
+.theme-light .bg-slate-950 {
+    background-color: #f8fafc;
+}
+
+.theme-light .bg-slate-950\/80 {
+    background-color: rgba(248, 250, 252, 0.9);
+}
+
+.theme-light .bg-slate-950\/60 {
+    background-color: rgba(241, 245, 249, 0.9);
+}
+
+.theme-light .bg-slate-950\/50 {
+    background-color: rgba(241, 245, 249, 0.8);
+}
+
+.theme-light .bg-slate-950\/40 {
+    background-color: rgba(241, 245, 249, 0.7);
+}
+
+.theme-light .bg-slate-900\/80 {
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+.theme-light .bg-slate-900\/70 {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.theme-light .bg-slate-900\/60 {
+    background-color: rgba(255, 255, 255, 0.85);
+}
+
+.theme-light .bg-slate-900\/80,
+.theme-light .bg-slate-900\/70,
+.theme-light .bg-slate-900\/60 {
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.theme-light .bg-slate-800 {
+    background-color: #e2e8f0;
+}
+
+.theme-light .bg-slate-700 {
+    background-color: #cbd5e1;
+}
+
+.theme-light .text-slate-100,
+.theme-light .text-slate-200 {
+    color: #0f172a;
+}
+
+.theme-light .text-slate-300 {
+    color: #334155;
+}
+
+.theme-light .text-slate-400 {
+    color: #475569;
+}
+
+.theme-light .text-slate-500 {
+    color: #64748b;
+}
+
+.theme-light .border-white\/10 {
+    border-color: rgba(15, 23, 42, 0.12);
+}
+
+.theme-light .border-white\/20 {
+    border-color: rgba(15, 23, 42, 0.2);
+}

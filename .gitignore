@@ -1,0 +1,64 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+.DS_Store
+dist
+dist-ssr
+coverage
+*.local
+
+/cypress/videos/
+/cypress/screenshots/
+
+# Editor directories and files
+/vendor
+/.idea
+.github/
+.vscode/*
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+Homestead.json
+Homestead.yaml
+.phpunit.result.cache
+*.code-workspace
+diff.txt
+
+############################################################
+# Node Module und Build-Artefakte
+############################################################
+node_modules/
+.schema/
+.schemas/
+dist/
+public/build/
+dev-dist/
+dist-ssr/
+.vite/
+
+############################################################
+# Umgebungsvariablen und Build-spezifische Dateien
+############################################################
+*.env*
+!.env.example
+*.tsbuildinfo
+package-lock.json
+
+############################################################
+# IDE-spezifische Einstellungen
+############################################################
+.vscode/
+.idea/
+.prettyrc
+.prettierrc
